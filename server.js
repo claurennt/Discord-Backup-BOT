@@ -1,8 +1,10 @@
 //Load HTTP module
+// require("dotenv").config();
+// const backup = require("discord-backup");
 const http = require("http");
 const hostname = "127.0.0.1";
 const port = 3000;
-
+const client = require("./Client.js");
 //Create HTTP server and listen on port 3000 for requests
 const server = http.createServer((req, res) => {
   //Set the response HTTP header with HTTP status and Content type
