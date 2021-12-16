@@ -1,0 +1,21 @@
+{
+  "name": "discord-backup-test-app",
+  "version": "1.0.0",
+  "description": "A test for setting up a discord backup",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/claurennt/DiscordBackup-test.git"
+  },
+  "author": "claurennt",
+  "license": "ISC",
+  "dependencies": {
+    "discord-backup": "^3.0.1",
+    "dotenv": "^10.0.0",
+    "nodemon": "^2.0.15"
+  }
+}
