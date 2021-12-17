@@ -1,139 +1,140 @@
 // Load modules
 
+//check a connection with mongodb
+//check now to trigger the backup without message
+
 require("dotenv").config();
 const { DISCORD_SERVER_ID, BOT_TOKEN } = process.env;
 
 const { Client, Intents } = require("discord.js");
 const backup = require("discord-backup");
 
-const client = new Client({
+// Discord Client
+const backupBot = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
-});
-const settings = {
-  prefix: "bot!",
+  commandPrefix: "bot!",
   token: BOT_TOKEN,
-};
-
-client.on("ready", () => {
-  console.log(`${client.user.username} is ready!`);
 });
 
-client.on("messageCreate", async (message) => {
-  // This reads the first part of your message behind your prefix to see which command you want to use.
-  let command = message.content
-    .toLowerCase()
-    .slice(settings.prefix.length)
-    .split(" ")[0];
+const {
+  options: { commandPrefix, token },
+} = backupBot;
+
+// Notifies when the bot is ready to receive commands
+backupBot.on("ready", () => {
+  console.log(`${backupBot.user.username} is ready!`);
+});
+
+backupBot.on("messageCreate", async (message) => {
+  const { content, author, guild, member, channel } = message;
+
+  // Extracts the command from the message
+  let command = content.toLowerCase().slice(commandPrefix.length).split(" ")[0];
 
   // These are the arguments behind the commands.
-  let args = message.content.split(" ").slice(1);
+  let argsAfterCommand = content.split(" ").slice(1);
 
-  // If the message does not start with your prefix return.
+  // If the message does not start with the commandPrefix return.
   // If the user that types a message is a bot account return.
   // If the command comes from DM return.
-  if (
-    !message.content.startsWith(settings.prefix) ||
-    message.author.bot ||
-    !message.guild
-  )
-    return;
+  if (!content.startsWith(commandPrefix) || author.bot || !guild) return;
 
   if (command === "create") {
-    // Check member permissions
-    if (!message.member.permissions.has("ADMINISTRATOR")) {
-      return message.channel.send(
+    // Check if the user who typed the command is an admin.
+    if (!member.permissions.has("ADMINISTRATOR")) {
+      return channel.send(
         ":x: | You must be an administrator of this server to request a backup!"
       );
     }
+
     // Create the backup
     backup
-      .create(message.guild, {
+      .create(guild, {
         jsonBeautify: true,
       })
       .then((backupData) => {
+        const { id } = backupData;
+        // Save the backup in a local folder
+
+        // confirm success in the channel
+        channel.send(":white_check_mark: Backup successfully created.");
+
         // And send informations to the backup owner
-        message.author.send(
-          `The backup has been created! To load it, type this command on the server of your choice: ${settings.prefix}load ${backupData.id}`
-        );
-        message.channel.send(
-          ":white_check_mark: Backup successfully created. The backup ID was sent in dm!"
+        author.send(
+          "The backup has been created! To load it, type this command on the server of your choice: `" +
+            commandPrefix +
+            "load " +
+            id +
+            "`"
         );
       });
   }
-
-  //TODO:send list to the user per dm + more info about that ids
-  //   if (command === "list") {
-  //     const list = await backup.list();
-  //     console.log(list);
-  //     return message.channel.send(list.toString());
-  //   }
-
   if (command === "load") {
     // Check member permissions
-    if (!message.member.permissions.has("ADMINISTRATOR")) {
-      return message.channel.send(
+    if (!member.permissions.has("ADMINISTRATOR")) {
+      return channel.send(
         ":x: | You must be an administrator of this server to load a backup!"
       );
     }
 
-    let backupID = args[0];
+    let backupID = argsAfterCommand[0];
     if (!backupID) {
-      return message.channel.send(
-        ":x: You must specify an ID. Type `bot!list` for more informations."
+      return channel.send(
+        ":x: You must specify an ID. You can find the ID in the private message you received or in your local storage folder."
       );
-    } //the backup ids are automatically created and stored. They can be retrieved by typing `bot!`
-  }
-  // Fetching the backup to know if it exists
-  backup
-    .fetch(backupID)
-    .then(async (backupInfo) => {
-      console.log(backupInfo);
-      // If the backup exists, request for confirmation
-      message.channel.send(
-        ":warning: | When the backup is loaded, all the channels, roles, etc. will be replaced! Type `-confirm` to confirm!"
-      );
-      await message.channel
-        .awaitMessages(
-          (m) => {
-            console.log("mmmmm", m);
-            m.author.id === message.author.id && m.content === "-confirm";
-          },
-          {
+    }
+
+    console.log("bb", backupID);
+    //Fetching the backup to know if it exists
+    backup
+      .fetch(backupID)
+      .then(async (backupInfo) => {
+        console.log(backupInfo);
+        // If the backup exists, request for confirmation
+
+        channel.send(
+          ":warning: | When the backup is loaded, all the channels, roles, etc. will be replaced! Type `-confirm` to confirm!",
+          2000
+        );
+
+        const isCommandCorrect = content.startsWith("-confirm");
+        //check if the user who wants to load the backup is the same who typed "-confirm"
+        const isUserSame = member.user.id === author.id;
+        const condition = isCommandCorrect && isUserSame;
+        await channel
+          .awaitMessages({
+            isCommandCorrect,
             max: 1,
             time: 20000,
             errors: ["time"],
-          }
-        )
-        .catch((err) => {
-          // if the author of the commands does not confirm the backup loading
-          return message.channel.send(
-            ":x: | Time's up! Cancelled backup loading!"
-          );
-        });
-      // When the author of the command has confirmed that he wants to load the backup on his server
-      message.author.send(":white_check_mark: | Start loading the backup!");
-      // Load the backup
-      backup
-        .load(backupID, message.guild)
-        .then(() => {
-          // When the backup is loaded, delete them from the server
-          backup.remove(backupID);
-        })
-        .catch((err) => {
-          // If an error occurred
-          return message.author.send(
-            ":x: | Sorry, an error occurred... Please check that I have administrator permissions!"
-          );
-        });
-    })
-    .catch((err) => {
-      console.log(err);
-      // if the backup wasn't found
-      return message.channel.send(
-        ":x: | No backup found for `" + backupID + "`!"
-      );
-    });
+          })
+          .catch((err) => {
+            console.log(err);
+            // if the author of the commands does not confirm the backup loading on time
+            return channel.send(":x: | Time's up! Cancelled backup loading!");
+          });
 
+        author.send(":white_check_mark: | Start loading the backup!");
+        // Load the backup
+        console.log("backupid", backupID);
+        backup
+          .load(backupID, guild)
+          .then(() => {
+            backup.remove(backupID);
+          })
+          .catch((err) => {
+            // If an error occurred
+            return message.author.send(
+              ":x: | Sorry, an error occurred... Please check that I have administrator permissions!"
+            );
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+        // if the backup wasn't found
+        return channel.send(":x: | No backup found for `" + backupID + "`!");
+      });
+  }
   if (command === "infos") {
     let backupID = args[0];
     if (!backupID) {
@@ -173,5 +174,13 @@ client.on("messageCreate", async (message) => {
 });
 
 //Your secret token to log the bot in. (never share this to anyone!)
-client.login(settings.token);
-module.exports = client;
+backupBot.login(token);
+
+//TODO:send list to the user per dm + more info about that ids
+//   if (command === "list") {
+//     const list = await backup.list();
+//     console.log(list);
+//     return message.channel.send(list.toString());
+//   }
+
+module.exports = backupBot;
