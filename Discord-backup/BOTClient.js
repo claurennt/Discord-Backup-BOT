@@ -14,7 +14,7 @@ const backupBot = new Client({
   token: BOT_TOKEN,
 });
 
-backupBot.on("ready", async (client) => {
+backupBot.once("ready", async (client) => {
   // Notifies when the bot is connected
   console.log(`${backupBot.user.username} BOT is ready!`);
   try {
