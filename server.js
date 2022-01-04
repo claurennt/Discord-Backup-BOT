@@ -4,20 +4,22 @@ require("dotenv").config();
 require("./DB/Client.js");
 require("./Discord-backup-BOT/BOTClient.js");
 
-//Load HTTP module
-const http = require("http");
-const hostname = "127.0.0.1";
+const express = require("express");
+const app = express();
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
+const helmet = require("helmet");
 const port = 3000;
 
-//Create HTTP server and listen on port 3000 for requests
-const server = http.createServer((req, res) => {
-  //Set the response HTTP header with HTTP status and Content type
-  res.statusCode = 200;
-  res.setHeader("Content-Type", "text/plain");
-  res.end("Hello World\n");
-});
+const botRouter = require("./routes/botRouter");
 
-//listen for request on port 3000, and as a callback function have the port listened on logged
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+app.use(helmet());
+app.use(logger("dev"));
+app.use(express.json());
+
+app.use("/", botRouter);
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.listen(port, () => {
+  console.log(`Example app listening at http://localhost:${port}`);
 });
