@@ -1,6 +1,6 @@
 # DiscordBackup-test
 
-The purpose of this repository is to set up a Discord Backup BOT that creates a backup of a given server and eventually load the Backup on the server if asked to.
+The purpose of this repository is to set up a Discord Backup BOT that creates a backup of a given server and eventually loads the Backup on the server if asked to.
 
 The BOT creates a backup of the server at a given time/day/month.
 The created backup is then automatically saved in a MongoDB database.
