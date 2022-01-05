@@ -23,7 +23,7 @@ const backupCreateSaveTask = cron.schedule(
   }
 );
 
-backupBot.once("ready", async () => {
+backupBot.once("ready", () => {
   // Notifies when the bot is connected
   console.log(`${backupBot.user.username} BOT is ready!`);
   try {
