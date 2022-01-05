@@ -1,23 +1,20 @@
-const discordBackup = require("discord-backup");
-const backupBot = require("../Discord-backup-BOT/BOTClient.js");
 const Backup = require("../DB/EmptyModel.js");
 
-const { DISCORD_SERVER_ID } = process.env;
-
+// this middleware is used to check the existance of a backup by its id (it has to be a mongoDB ObjectId value)
 const findBackupById = async (req, res, next) => {
   const { id } = req.params;
 
   try {
     const [backupData] = await Backup.find({ _id: id });
 
+    // if the backup is not found return
     if (!backupData)
       return res
         .status(404)
         .send(`<h2> We could not find any backup matching id: ${id}</h2>`);
 
-    const { backupId, name } = backupData;
-
-    req.foundBackup = { backupId, name };
+    // if the backup is found, send it with the request to the next middleware
+    req.foundBackup = backupData;
 
     next();
   } catch (err) {

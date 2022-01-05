@@ -9,6 +9,6 @@ botRouter.get("/", (req, res) => {
   res.send("Welcome to WBS Backup Bot");
 });
 
-botRouter.get("/:id", findBackupById, confirmBackupLoad /*load_backup*/);
+botRouter.get("/load/:id", findBackupById, confirmBackupLoad, load_backup);
 
 module.exports = botRouter;

@@ -1,15 +1,18 @@
 const discordBackup = require("discord-backup");
 const backupBot = require("../Discord-backup-BOT/BOTClient.js");
-const Backup = require("../DB/EmptyModel.js");
 
 const { DISCORD_SERVER_ID } = process.env;
 
+// controller that loads the backup on the given server
 const load_backup = async (req, res) => {
   const myGuild = backupBot.guilds.cache.get(DISCORD_SERVER_ID);
+
+  const { backupId } = req;
+
   try {
     // try loading the backup, return if it fails
     discordBackup.load(backupId, myGuild).catch((err) => {
-      console.log("laod error", err);
+      console.log("load error", err);
       return res.status(400).send("Failed to load the Backup.");
     });
 
