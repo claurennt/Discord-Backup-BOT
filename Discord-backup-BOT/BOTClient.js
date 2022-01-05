@@ -14,7 +14,7 @@ const backupBot = new Client({
 });
 
 // Cron Task Setup that runs the createAndSaveBackup function every day at 7PM
-const backupCreateSavingTask = cron.schedule(
+const backupCreateSaveTask = cron.schedule(
   "0 19 1-31 Jan-Dec Mon-Sun ",
   () => createAndSaveBackup(discordBackup, backupBot, DISCORD_SERVER_ID),
   {
@@ -28,7 +28,7 @@ backupBot.once("ready", async () => {
   console.log(`${backupBot.user.username} BOT is ready!`);
   try {
     // starts the Cron Task
-    backupCreateSavingTask.start();
+    backupCreateSaveTask.start();
   } catch (err) {
     console.log(err);
   }
