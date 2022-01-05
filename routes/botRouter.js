@@ -1,14 +1,14 @@
 const express = require("express");
 const botRouter = express.Router();
 
-const {
-  get_backup_by_id_and_load,
-} = require("../controllers/botControllers.js");
+const findBackupById = require("../middlewares/findBackupById");
+const confirmBackupLoad = require("../middlewares/confirmBackupLoad");
+const load_backup = require("../controllers/load_backup.js");
 
 botRouter.get("/", (req, res) => {
   res.send("Welcome to WBS Backup Bot");
 });
 
-botRouter.get("/:id", get_backup_by_id_and_load);
+botRouter.get("/load/:id", findBackupById, confirmBackupLoad, load_backup);
 
 module.exports = botRouter;

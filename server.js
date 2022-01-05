@@ -17,7 +17,10 @@ app.use(helmet());
 app.use(logger("dev"));
 app.use(express.json());
 
+app.get("/favicon.ico", (req, res) => res.status(204));
+
 app.use("/", botRouter);
+
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.listen(port, () => {

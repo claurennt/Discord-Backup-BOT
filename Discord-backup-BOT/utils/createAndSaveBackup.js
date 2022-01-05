@@ -13,23 +13,25 @@ const createAndSaveBackup = async (backup, client, serverId) => {
   const dateTime = getDateTime();
 
   try {
-    Backup.create({
+    //creates backup document in the Backup collection in the DB
+    await Backup.create({
       //expand backup JSON file with current Date and Time
       ...backupData,
       dateTime,
-      // create a new property backUpId that will serve as argument for the backup.load() function
+      // creates a new property backUpId that will serve as argument for the backup.load() function
       backupId: backupData.id,
-    })
-      .then(() => {
-        console.log(`Backup saved successfully`);
-        return res.status(200).send("Backup saved successfully");
-      })
-      .catch((err) => {
-        console.log(err);
-        return res.status(400).send("Failed to save the Backup.");
-      });
+    });
+
+    console.log(`Backup saved successfully`);
+
+    // close the server, success exit code
+    process.exit(0);
+    return;
   } catch (err) {
     console.log("err", err);
+
+    // close the server, failure exit code
+    process.exit(1);
   }
 };
 
