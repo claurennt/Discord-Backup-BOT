@@ -2,7 +2,7 @@
 const { Client, Intents } = require("discord.js");
 const discordBackup = require("discord-backup");
 const cron = require("node-cron");
-const db = require("../DB/Client.js");
+
 const createAndSaveBackup = require("./utils/createAndSaveBackup.js");
 
 const { DISCORD_SERVER_ID, BOT_TOKEN } = process.env;
