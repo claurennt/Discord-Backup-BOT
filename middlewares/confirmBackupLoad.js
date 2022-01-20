@@ -25,7 +25,7 @@ Confirm you choice with the BOT's #Confirmation Command:
 `,
       (command) => {
         // If the user does not type any command or an invalid command return
-        if (!command || command != BACKUP_LOAD_CONFIRMATION_COMMAND) {
+        if (!command || command !== BACKUP_LOAD_CONFIRMATION_COMMAND) {
           console.log("Invalid command.");
           return res.status(400).send(`<h2>Invalid command.</h2>`);
         }
