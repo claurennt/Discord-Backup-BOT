@@ -21,7 +21,7 @@ Scroll down to find the **GENERATED URL**, copy it and paste it into the browser
 5. Choose the server and authorize. Your BOT is now connected!
 6. Store the SERVER ID in your .env file as DISCORD_SERVER_ID
 7. Store the the MongoDB connection string in your .env file as MONGO_DB_CONNECTION_URI
-8. Store a secred confirmation command in your .env file as BACKUP_LOAD_CONFIRMATION_COMMAND
+8. Store a secret confirmation command in your .env file as BACKUP_LOAD_CONFIRMATION_COMMAND
 
 
 ## Specifications
