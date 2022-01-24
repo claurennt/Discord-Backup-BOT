@@ -24,14 +24,13 @@ const createAndSaveBackup = async (backup, client, serverId) => {
 
     console.log(`Backup saved successfully`);
 
-    // close the server, success exit code
-    process.exit(0);
-    return;
+   
+    
+    
   } catch (err) {
     console.log("err", err);
 
-    // close the server, failure exit code
-    process.exit(1);
+   
   }
 };
 
