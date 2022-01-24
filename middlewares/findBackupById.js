@@ -5,7 +5,7 @@ const findBackupById = async (req, res, next) => {
   const { id } = req.params;
 
   try {
-    const [backupData] = await Backup.find({ _id: id });
+    const backupData = await Backup.findById({ _id: id });
 
     // if the backup is not found return
     if (!backupData)

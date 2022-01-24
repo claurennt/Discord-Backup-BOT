@@ -1,7 +1,7 @@
 //Load modules
 const { Client, Intents } = require("discord.js");
-const discordBackup = require("discord-backup");
-const cron = require("node-cron");
+const discordBackup = require('discord-backup');
+const { CronJob } = require('cron');
 
 const createAndSaveBackup = require("./utils/createAndSaveBackup.js");
 
@@ -13,22 +13,19 @@ const backupBot = new Client({
   token: BOT_TOKEN,
 });
 
-// Cron Task Setup that runs the createAndSaveBackup function every day at 7PM
-const backupCreateSaveTask = cron.schedule(
-  "0 19 1-31 Jan-Dec Mon-Sun ",
-  () => createAndSaveBackup(discordBackup, backupBot, DISCORD_SERVER_ID),
-  {
-    scheduled: true,
-    timezone: "Europe/Berlin",
-  }
-);
 
-backupBot.once("ready", () => {
+// Cron task to save a backup of the server Monday-Suday at 21:00
+// ----testing cron job, run every 10 seconds '*/10 * * * * *'
+new CronJob('00 21 * * 0-6', () => {
+  createAndSaveBackup(discordBackup, backupBot, DISCORD_SERVER_ID);
+}, null, true, 'Europe/Berlin');
+
+backupBot.once("ready",  () => {
   // Notifies when the bot is connected
   console.log(`${backupBot.user.username} BOT is ready!`);
   try {
     // starts the Cron Task
-    backupCreateSaveTask.start();
+ //  backupCreateSaveTask.start();
   } catch (err) {
     console.log(err);
   }

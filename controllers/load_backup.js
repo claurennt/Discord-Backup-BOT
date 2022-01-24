@@ -3,30 +3,31 @@ const backupBot = require("../Discord-backup-BOT/BOTClient.js");
 
 const { DISCORD_SERVER_ID } = process.env;
 
+const successLoadingMessage = '🤖: Check your Discord Server! The backup loading process has started!';
+const failureLoadingMessage = '🤖: Something went wrong! Error message: ';
 // controller that loads the backup on the given server
-const load_backup = async (req, res) => {
+// eslint-disable-next-line consistent-return
+
+// eslint-disable-next-line consistent-return
+const load_backup = (req, res) => {
   const myGuild = backupBot.guilds.cache.get(DISCORD_SERVER_ID);
-
-  const { backupId } = req;
-
+  const { backupId } = req.foundBackup;
   try {
-    // try loading the backup, return if it fails
-    discordBackup.load(backupId, myGuild).catch((err) => {
-      console.log("load error", err);
-      return res.status(400).send("Failed to load the Backup.");
-    });
+  // try loading the backup
+    discordBackup.load(backupId, myGuild);
 
-    // Print info on the console
-    console.log("Loading the Backup...");
-
+    // prints success message and sends response to client
+    console.log(successLoadingMessage);
     return res
-      .status(200)
-      .send(
-        `<h1>Check your Discord Server! The backup loading process has started!</h1>`
-      );
+      .status(200).send(`<h1>${successLoadingMessage}</h1>`);
   } catch (err) {
-    console.log(err);
+    // prints failure message and sends response to client
+    console.log(`${failureLoadingMessage} ${err}`);
+    return res
+      .status(400)
+      .send(
+        `<h1>${failureLoadingMessage} ${err}</h1>`,
+      );
   }
 };
-
 module.exports = load_backup;
