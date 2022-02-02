@@ -1,5 +1,5 @@
 <div align="center">
-   ![icon](https://repository-images.githubusercontent.com/438923478/6d3341d6-d027-4420-924e-fdbe8c2e1704)
+   <img src="https://repository-images.githubusercontent.com/438923478/6d3341d6-d027-4420-924e-fdbe8c2e1704" />
    </div >
 # DISCORD BACKUP BOT
 
