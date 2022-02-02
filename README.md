@@ -1,7 +1,8 @@
 <div align="center">
    <img src="https://repository-images.githubusercontent.com/438923478/6d3341d6-d027-4420-924e-fdbe8c2e1704" alt="icon"/>
    </div >
-# DISCORD BACKUP BOT
+
+<h1>DISCORD BACKUP BOT</h1>
 
 The purpose of this repository is to set up a Discord Backup BOT that creates a backup of a given server and eventually loads the Backup on the server if asked to.
 
