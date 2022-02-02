@@ -1,5 +1,5 @@
 
-[](./BOT_Icon.png)
+[]("./BOT_Icon.png")
 # DISCORD BACKUP BOT
 
 The purpose of this repository is to set up a Discord Backup BOT that creates a backup of a given server and eventually loads the Backup on the server if asked to.
